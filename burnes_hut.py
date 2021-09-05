@@ -104,15 +104,6 @@ class Node():
 
         return [res, total_mass]
 
-
-    '''
-    1. bodyが入るノードを計算
-    2. そのノードの状態によって, 以下の3つの場合に分ける
-     2.1. ノードが子を持っていない, かつ, ノードにbodyが割り当てられていなければ, そのノードにbodyを割り当てる.
-     2.2. ノードにすでにbodyが割り当てられていれば, 子を生成する. 既に割り当てられていたbodyと新たなbodyを引数としてそれぞれ, 1にもどる
-     2.3. ノードがすでに子を持っていれば, 1にもどる
-    '''
-
     def insert(self, inserted_body):
         partition_idx = self.calcPartition(inserted_body)
 
@@ -148,46 +139,6 @@ class Node():
         self.center_of_mass.position = self.updatecenter_of_mass()[0]
         self.center_of_mass.mass = self.updatecenter_of_mass()[1]
 
-
-
-    #### 並列化するとしたらここ！
-    #本当はベクトル和を計算し, "力をもとに, 速度変更, 位置変更"の繰り返しによってシミュレーションを行うが, 今回はテストのため, 力の大きさを求めることにする.
-    '''
-    Bagの構造
-    result := gravity;
-    Node nodes[];
-
-    process(WORK_UNIT){
-        calc_gravity(WORK_UNIT) (再帰)
-        -> 「for child in children」の部分を, 処理ではなく, bagqueueへの追加とする.
-        -> とりあえず全部自分のところに追加すると仮定しよう
-        update()
-    }
-
-    split(){
-        split node into two;
-        return new Bag(nodes);
-    }
-
-    merge(){
-        nodes.grow();
-        受け取ったタスクのnodesと現在保持しているnodesをくっつける.
-
-    }
-
-    getResult(){
-        return gravity;
-    }
-
-    submit(Sum total_gravity){
-        toral_gravity.sum += gravity
-    }
-
-    splitが起きたときにどうなるのか?
-    たぶんばらつく -> これを解決できるデータ構造を考える.
-
-    '''
-
     def calc_gravity(self, base_body):
         if self.status == -1:
             return 0
@@ -210,7 +161,6 @@ class Node():
 
     def space_plot(self):
 
-        #子供が存在すれば
         if self.status == 1:
             for child in self.children:
                 child.space_plot()
